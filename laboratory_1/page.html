@@ -88,17 +88,17 @@ function startGL()
   let zFar = 100.0; //Ustalenie zakresów renderowania sceny 3D (od obiektu najbliższego zNear do najdalszego zFar)
   let zNear = 0.1;
   let uPMatrix = [
-   1.0/(aspect*Math.tan(fov/2)),0                           ,0                         ,1                            ,
-   0                         ,1.0/(Math.tan(fov/2))         ,0                         ,1                            ,
-   0                         ,0                           ,-(zFar+zNear)/(zFar-zNear)  , -1,
-   0                         ,0                           ,-(2*zFar*zNear)/(zFar-zNear) ,0.0,
+   1.0/(aspect*Math.tan(fov/2)),0                           ,0                         ,0                            ,
+   0                         ,1.0/(Math.tan(fov/2))         ,0                         ,0                            ,
+   0                         ,0.9                         ,-(zFar+zNear)/(zFar-zNear)  , -1,
+   0                         ,0                         ,-(2*zFar*zNear)/(zFar-zNear) ,0.0,
   ];
   let angle = 0; //Macierz transformacji świata - określenie położenia kamery 
   let uMVMatrix = [
   Math.cos(angle*Math.PI/180.0),-Math.sin(angle*Math.PI/180.0),0,0, //Macierz Rotacji
   Math.sin(angle*Math.PI/180.0),Math.cos(angle*Math.PI/180.0),0,0,
   0,0,1,0.0,
-  0,0,-8,1 //Położenie kamery
+  0,0,-4,1 //Położenie kamery
   ];
   
   //alert(uPMatrix);
