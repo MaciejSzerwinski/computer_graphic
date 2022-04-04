@@ -189,19 +189,12 @@ function startGL()
   let numTransitions = 8;
   let smallDegree = 360/numTransitions;
   let bigDegree = (360*2)/numTransitions;
-  //for(let elevation=-90; elevation< 90; elevation+= stepElevation)
+  for(let elevation=-90; elevation< 90; elevation+= stepElevation)
   for(let torusAngle = 0; torusAngle < 360; torusAngle += stepTorus)
   {
-    let G = torusAngle%smallDegree/smallDegree;
-    let R = torusAngle%bigDegree/bigDegree;
-    for(let i = torusAngle/(360/numTransitions); i < numTransitions; i++){
-      G = 1.0 - G;
-      R = 1.0 - R;
-    }
-
     for(let angle = 0; angle < 360; angle+= stepAngle)
     {
-      vertexColor.push(...createRectColor(R,G,0.0));
+      vertexColor.push(...createRectColor(0,1.0,0.0));
     }
   }
   
@@ -212,17 +205,6 @@ function startGL()
   vertexColorBuffer.numItems = vertexColor.length/9;
   
   let vertexCoords = []; //3 punkty po 2 składowe - U1,V1, U2,V2, U3,V3 - 1 trójkąt
-  
-  /*
-  //for(let elevation=-90; elevation< 90; elevation+= stepElevation)
-  for(let torusAngle = 0; torusAngle < 360; torusAngle += stepTorus)
-  {
-    for(let angle = 0; angle < 360; angle+= stepAngle)
-    {
-      vertexCoords.push(...createRectCoords(0,0,1,0,0,1));
-    }
-  }
-  */
   
   vertexCoordsBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexCoordsBuffer);
@@ -364,13 +346,6 @@ function handlekeydown(e)
 </head>
 <body onload="startGL()" onkeydown="handlekeydown(event)">
 <canvas id="canvas3D" width="640" height="480" style="border: solid black 1px"></canvas>
-<p>LEFT: <b><font color="blue">NUMPAD 4</font></b></p>
-<p>RIGHT: <b><font color="blue">NUMPAD 6</font></b></p>
-<p>UP: <b><font color="blue">NUMPAD 8</font></b></p>
-<p>DOWN: <b><font color="blue">NUMPAD 2</font></b></p>
-<p>AWAY: <b><font color="blue">NUMPAD -</font></b></p>
-<p>CLOSER: <b><font color="blue">NUMPAD +</font></b></p>
-
 <img id="textureImg" src="Tex.png">
 </body>
 </html>
