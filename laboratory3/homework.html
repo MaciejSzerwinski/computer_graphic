@@ -33,11 +33,11 @@ let uMVMatrix = null;
 
 function startGL() 
 {
-  alert("StartGL");
   let canvas = document.getElementById("canvas3D"); //wyszukanie obiektu w strukturze strony 
-  gl = canvas.getContext("experimental-webgl"); //pobranie kontekstu OpenGL'u z obiektu canvas
+  gl = canvas.getContext("experimental-webgl") || canvas.getContext("webgl"); //pobranie kontekstu OpenGL'u z obiektu canvas
   gl.viewportWidth = canvas.width; //przypisanie wybranej przez nas rozdzielczości do systemu OpenGL
   gl.viewportHeight = canvas.height;
+  document.body.style.backgroundColor = 'blue';
 
   //Kod shaderów
   const vertextShaderSource = ` //Znak akcentu z przycisku tyldy - na lewo od przycisku 1 na klawiaturze
@@ -61,8 +61,8 @@ function startGL()
     varying vec2 vTexUV;
     uniform sampler2D uSampler;
     void main(void) {
-      //gl_FragColor = vec4(vColor,1.0); //Ustalenie stałego koloru wszystkich punktów sceny
-      gl_FragColor = texture2D(uSampler,vTexUV)*vec4(vColor,1.0); //Odczytanie punktu tekstury i przypisanie go jako koloru danego punktu renderowaniej figury
+      gl_FragColor = vec4(vColor,1.0); //Ustalenie stałego koloru wszystkich punktów sceny
+      gl_FragColor = texture2D(uSampler,vTexUV); //Odczytanie punktu tekstury i przypisanie go jako koloru danego punktu renderowaniej figury
     }
   `;
   let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER); //Stworzenie obiektu shadera 
@@ -88,31 +88,35 @@ function startGL()
 
   //Opis sceny 3D, położenie punktów w przestrzeni 3D w formacie X,Y,Z 
   let vertexPosition = [
-  //Top
-    -1.0, +1.0, -1.0,  -1.0, +1.0, +1.0,  +1.0, +1.0, +1.0, //3 punkty po 3 składowe - X1,Y1,Z1, X2,Y2,Z2, X3,Y3,Z3 - 1 trójkąt
-    -1.0, +1.0, -1.0,  +1.0, +1.0, +1.0,  +1.0, +1.0, -1.0,
-  //Left
-    -1.0, -1.0, +1.0,  -1.0, +1.0, +1.0,  -1.0, -1.0, -1.0,
-    -1.0, -1.0, -1.0,  -1.0, +1.0, +1.0,  -1.0, +1.0, -1.0,
-  //Right
-    +1.0, +1.0, +1.0,  +1.0, -1.0, +1.0,  +1.0, -1.0, -1.0,
-    +1.0, +1.0, +1.0,  +1.0, -1.0, -1.0,  +1.0, +1.0, -1.0,
-  //Front
-    +1.0, -1.0, +1.0,  +1.0, +1.0, +1.0,  -1.0, -1.0, +1.0,
-    -1.0, +1.0, +1.0,  -1.0, -1.0, +1.0,  +1.0, +1.0, +1.0,
+  // //Top
+  //   -1.0, +1.0, -1.0,  -1.0, +1.0, +1.0,  +1.0, +1.0, +1.0, //3 punkty po 3 składowe - X1,Y1,Z1, X2,Y2,Z2, X3,Y3,Z3 - 1 trójkąt
+  //   -1.0, +1.0, -1.0,  +1.0, +1.0, +1.0,  +1.0, +1.0, -1.0,
+  // //Left
+  //   -1.0, -1.0, +1.0,  -1.0, +1.0, +1.0,  -1.0, -1.0, -1.0,
+  //   -1.0, -1.0, -1.0,  -1.0, +1.0, +1.0,  -1.0, +1.0, -1.0,
+  // //Right
+  //   +1.0, +1.0, +1.0,  +1.0, -1.0, +1.0,  +1.0, -1.0, -1.0,
+  //   +1.0, +1.0, +1.0,  +1.0, -1.0, -1.0,  +1.0, +1.0, -1.0,
+  // //Front
+  //   +1.0, -1.0, +1.0,  +1.0, +1.0, +1.0,  -1.0, -1.0, +1.0,
+  //   -1.0, +1.0, +1.0,  -1.0, -1.0, +1.0,  +1.0, +1.0, +1.0,
   //Back
-    +1.0, +1.0, -1.0,  +1.0, -1.0, -1.0,  -1.0, -1.0, -1.0,
-    +1.0, +1.0, -1.0,  -1.0, -1.0, -1.0,  -1.0, +1.0, -1.0,
-  //Bottom
-    -1.0, -1.0, +1.0,  -1.0, -1.0, -1.0,  +1.0, -1.0, +1.0,
-    +1.0, -1.0, +1.0,  -1.0, -1.0, -1.0,  +1.0, -1.0, -1.0
+    5.0, 5.0, 0.0,  5.0, -5.0, 0.0,  -5.0, -5.0, 0.0,
+    5.0, 5.0, 0.0,  -5.0, 5.0, 0.0,  -5.0, -5.0, 0.0,
+
+      //Back
+      15.0, 2.0, 0.0,  15.0, -2.0, 0.0,  10.0, -2.0, 0.0,
+    15.0, 2.0, 0.0,  10.0, 2.0, 0.0,  10.0, -2.0, 0.0,
+  // //Bottom
+  //   -1.0, -1.0, +1.0,  -1.0, -1.0, -1.0,  +1.0, -1.0, +1.0,
+  //   +1.0, -1.0, +1.0,  -1.0, -1.0, -1.0,  +1.0, -1.0, -1.0
   ]
 
   vertexPositionBuffer = gl.createBuffer(); //Stworzenie tablicy w pamieci karty graficznej
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexPosition), gl.STATIC_DRAW);
   vertexPositionBuffer.itemSize = 3; //zdefiniowanie liczby współrzednych per wierzchołek
-  vertexPositionBuffer.numItems = 12; //Zdefinoiowanie liczby punktów w naszym buforze
+  vertexPositionBuffer.numItems = 4; //Zdefinoiowanie liczby punktów w naszym buforze
 
   //Opis sceny 3D, kolor każdego z wierzchołków
   let vertexColor = [
@@ -178,7 +182,7 @@ function startGL()
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   }
-  textureImg.src="Tex.png"; //Nazwa obrazka
+  textureImg.src="sunmap.jpg"; //Nazwa obrazka
 
   //Macierze opisujące położenie wirtualnej kamery w przestrzenie 3D
   let aspect = gl.viewportWidth/gl.viewportHeight;
@@ -247,8 +251,14 @@ function Tick()
   //alert(uPMatrix);
   
   //Render Scene
+  var texture = new Image();
+  texture.onload = function() { //Wykonanie kodu automatycznie po załadowaniu obrazka
+    gl.bindTexture(gl.TEXTURE_2D, textureBuffer);
+  }
+  texture.src="sunmap.jpg"; //Nazwa obrazka
+
   gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight); 
-  gl.clearColor(1.0,0.0,0.0,1.0); //Wyczyszczenie obrazu kolorem czerwonym
+  gl.clearColor(0.0,1.0,0.0,1.0); //Wyczyszczenie obrazu kolorem czerwonym
   gl.clearDepth(1.0);             //Wyczyścienie bufora głebi najdalszym planem
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.useProgram(shaderProgram)   //Użycie przygotowanego programu shaderowego
@@ -281,18 +291,17 @@ function Tick()
 }
 function handlekeydown(e)
 {
- if(e.keyCode==87) tx=tx+1.0; //W
+  if(e.keyCode==87) tx=tx+1.0; //W
  if(e.keyCode==83) tx=tx-1.0; //S
- if(e.keyCode==68) ty=ty+1.0; //A
- if(e.keyCode==65) ty=ty-1.0; //D
- if(e.keyCode==81) tz=tz+1.0; //Q
- if(e.keyCode==69) tz=tz-1.0; //E
+ if(e.keyCode==68) ty=ty+1.0;
+ if(e.keyCode==65) ty=ty-1.0;
+ if(e.keyCode==81) tz=tz+1.0;
+ if(e.keyCode==69) tz=tz-1.0;
 }
 </script>
 </head>
 <body onload="startGL()" onkeydown="handlekeydown(event)">
 <canvas id="canvas3D" width="640" height="480" style="border: solid black 1px"></canvas>
-<img id="textureImg" src="Tex.png">
-<h1>&#9774</h1>
+<img id="textureImg" src="sunmap.jpg">
 </body>
 </html>
