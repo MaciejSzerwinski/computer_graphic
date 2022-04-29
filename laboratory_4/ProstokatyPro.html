@@ -87,32 +87,21 @@ function startGL()
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) alert("Could not initialise shaders");  //Sprawdzenie ewentualnych błedów
 
   //Opis sceny 3D, położenie punktów w przestrzeni 3D w formacie X,Y,Z 
-  let vertexPosition = [
-  //Top
-    -1.0, +1.0, -1.0,  -1.0, +1.0, +1.0,  +1.0, +1.0, +1.0, //3 punkty po 3 składowe - X1,Y1,Z1, X2,Y2,Z2, X3,Y3,Z3 - 1 trójkąt
-    -1.0, +1.0, -1.0,  +1.0, +1.0, +1.0,  +1.0, +1.0, -1.0,
-  //Left
-    -1.0, -1.0, +1.0,  -1.0, +1.0, +1.0,  -1.0, -1.0, -1.0,
-    -1.0, -1.0, -1.0,  -1.0, +1.0, +1.0,  -1.0, +1.0, -1.0,
-  //Right
-    +1.0, +1.0, +1.0,  +1.0, -1.0, +1.0,  +1.0, -1.0, -1.0,
-    +1.0, +1.0, +1.0,  +1.0, -1.0, -1.0,  +1.0, +1.0, -1.0,
-  //Front
-    +1.0, -1.0, +1.0,  +1.0, +1.0, +1.0,  -1.0, -1.0, +1.0,
-    -1.0, +1.0, +1.0,  -1.0, -1.0, +1.0,  +1.0, +1.0, +1.0,
-  //Back
-    +1.0, +1.0, -1.0,  +1.0, -1.0, -1.0,  -1.0, -1.0, -1.0,
-    +1.0, +1.0, -1.0,  -1.0, -1.0, -1.0,  -1.0, +1.0, -1.0,
-  //Bottom
-    -1.0, -1.0, +1.0,  -1.0, -1.0, -1.0,  +1.0, -1.0, +1.0,
-    +1.0, -1.0, +1.0,  -1.0, -1.0, -1.0,  +1.0, -1.0, -1.0
-  ]
+  let vertexPosition = []; //3 punkty po 3 składowe - X1,Y1,Z1, X2,Y2,Z2, X3,Y3,Z3 - 1 trójkąt
+
+  vertexPosition.push(...createRect(-1,-1,-1, 2,0,0, 0,2,0)); // Ściana XY
+  vertexPosition.push(...createRect(-1,-1,-1, 2,0,0, 0,0,2)); // Ściana XZ
+  vertexPosition.push(...createRect(-1,-1,-1, 0,2,0, 0,0,2)); // Ściana YZ lewa
+  vertexPosition.push(...createRect(1,-1,-1, 0,0,2, 0,2,0)); // Ściana YZ prawa
+  vertexPosition.push(...createRect(-1,-1,1, 2,0,0, 0,2,0)); // Ściana XY front
+  vertexPosition.push(...createRect(-1,1,1, 0,0,-2, 2,0,0)); // Ściana YZ
+
 
   vertexPositionBuffer = gl.createBuffer(); //Stworzenie tablicy w pamieci karty graficznej
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexPosition), gl.STATIC_DRAW);
   vertexPositionBuffer.itemSize = 3; //zdefiniowanie liczby współrzednych per wierzchołek
-  vertexPositionBuffer.numItems = 12; //Zdefinoiowanie liczby punktów w naszym buforze
+  vertexPositionBuffer.numItems = vertexPosition.length/9; //Zdefinoiowanie liczby trójkątów w naszym buforze
 
   //Opis sceny 3D, kolor każdego z wierzchołków
   let vertexColor = [
@@ -281,12 +270,25 @@ function Tick()
 }
 function handlekeydown(e)
 {
- if(e.keyCode==87) tx=tx+1.0; //W
- if(e.keyCode==83) tx=tx-1.0; //S
- if(e.keyCode==68) ty=ty+1.0; //A
- if(e.keyCode==65) ty=ty-1.0; //D
- if(e.keyCode==81) tz=tz+1.0; //Q
- if(e.keyCode==69) tz=tz-1.0; //E
+ if(e.keyCode==87) angleX=angleX+1.0; //W
+ if(e.keyCode==83) angleX=angleX-1.0; //S
+ if(e.keyCode==68) angleY=angleY+1.0; //A
+ if(e.keyCode==65) angleY=angleY-1.0; //D
+ if(e.keyCode==81) angleZ=angleZ+1.0; //Q
+ if(e.keyCode==69) angleZ=angleZ-1.0; //E
+}
+
+function createRect(mx,my,mz,dax,day,daz,dbx,dby,dbz)
+{
+  p1x = mx;             p1y = my;             p1z = mz;
+  p2x = mx + dax;       p2y = my + day;       p2z = mz + daz;
+  p3x = mx + dbx;       p3y = my + dby;       p3z = mz + dbz;
+  p4x = mx + dax + dbx; p4y = my + day + dby; p4z = mz + daz + dbz;
+  
+  let vertexPosition = [p1x,p1y,p1z, p2x,p2y,p2z, p4x,p4y,p4z,  //Pierwszy trójkąt
+                        p1x,p1y,p1z, p4x,p4y,p4z, p3x,p3y,p3z]; //Drugi trójkąt
+                        
+  return vertexPosition;
 }
 </script>
 </head>
